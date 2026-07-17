@@ -15,5 +15,5 @@ Content-Type: application/json
 Accept: application/json, text/event-stream
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"add_issue_comment","arguments":{"issueId":"<id>","text":"<text>"}}}
+{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"add_issue_comment","arguments":{"issueId":"PROJ-123","text":"Comment text in Markdown"}}}
 ```
