@@ -16,7 +16,7 @@ This skill reads credentials from environment variables:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `YOUTRACK_URL` | Yes | YouTrack instance URL, e.g. `http://192.168.0.29:8080` |
+| `YOUTRACK_URL` | Yes | YouTrack instance URL, e.g. `http://youtrack.example.com:8080` |
 | `YOUTRACK_TOKEN` | Yes | Permanent token from YouTrack |
 
 **If either variable is not set**, ask the user for the values. Generate a permanent token in YouTrack: **Settings > Account > Authentication > New token**.
