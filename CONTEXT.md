@@ -1,6 +1,6 @@
 # YouTrack Skill
 
-A cross-platform agent skill that lets AI agents (OpenCode, WorkBuddy) interact with YouTrack via the built-in MCP server. No CLI scripts needed — agents invoke MCP tools directly.
+A cross-platform agent skill that lets AI agents (OpenCode, WorkBuddy) interact with YouTrack via the built-in MCP server. Agents discover tools through `tools/index.md`, then load individual tool templates on demand.
 
 ## Language
 
@@ -9,13 +9,16 @@ A specific YouTrack server identified by a base URL. The MCP endpoint is at `{ba
 _Avoid_: Server, tracker, YT
 
 **MCP Tool**:
-A named function exposed by the YouTrack MCP server (e.g., `search_issues`, `create_article`). The agent calls these directly through the MCP protocol — no CLI or REST wrapper needed.
+A named function exposed by the YouTrack MCP server (e.g., `search_issues`, `create_article`). Invoked via JSON-RPC `tools/call` method.
 _Avoid_: Endpoint, API call, command
 
 **Article**:
-A YouTrack Knowledge Base document. Articles are organized in projects and can have parent/child hierarchies. Created and updated via MCP tools (`create_article`, `update_article`).
+A YouTrack Knowledge Base document. Created and updated via MCP tools. No delete tool exists.
 _Avoid_: KB page, wiki page, doc
 
-**Permanent Token**:
-A long-lived YouTrack authentication token generated at Settings → Account → Authentication. Used in the MCP server's `Authorization` header.
-_Avoid_: API key, password, secret
+**JSON-RPC Envelope**:
+The request format for MCP calls: `{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"<tool>","arguments":{}}}`.
+_Avoid_: REST call, curl command
+
+**Progressive Discovery**:
+Loading strategy where the agent reads `tools/index.md` to find a tool, then loads only that tool's file. Avoids loading all 23 tool descriptions at once.
