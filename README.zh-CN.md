@@ -1,6 +1,6 @@
 <!-- AGENT_READABLE_START -->
 name: youtrack-skill
-description: YouTrack MCP 集成 skill — 注册内置 MCP 服务器后可通过 22 个 MCP 工具操作 issues、知识库文章、项目、用户、标签、工时。零安装，零依赖。
+description: YouTrack MCP skill — 渐进式发现 23 个工具（issues、知识库、项目、用户），通过 JSON-RPC 裸调。零安装，按需加载工具模板。
 platforms: OpenCode, WorkBuddy, Claude Code, Cursor
 requires: YouTrack ≥ 2024.3
 entry: MCP server at {baseUrl}/mcp
@@ -16,54 +16,39 @@ entry: MCP server at {baseUrl}/mcp
 
 > 🇺🇸 [English docs](README.md)
 
-基于 YouTrack **内置 MCP 服务器**（≥ 2024.3）的 Agent skill。注册 MCP endpoint 后，Agent 即可通过 22 个 MCP 工具操作 issues、知识库文章、项目、用户、标签、工时。无需 CLI，无需 npm install，零依赖。
+基于 YouTrack **内置 MCP 服务器**（≥ 2024.3）的 Agent skill。设置两个环境变量后，Agent 通过 JSON-RPC 调用 23 个工具——只加载需要的工具模板，零常驻上下文开销。
 
 ## 安装
 
-将本目录复制到 Agent 的 skill 路径：
-
 ```bash
-# OpenCode / WorkBuddy
 cp -r youtrack-skill ~/.agents/skills/youtrack
-
-# Claude Code
-cp -r youtrack-skill ~/.claude/skills/youtrack
 ```
 
 ## 配置
 
-在 Agent 的 MCP 配置中注册服务器：
+设置两个环境变量：
 
-```json
-{
-  "mcpServers": {
-    "youtrack": {
-      "url": "http://your-youtrack.example.com:8080/mcp",
-      "headers": {
-        "Authorization": "Bearer perm-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-      }
-    }
-  }
-}
+```bash
+export YOUTRACK_URL=http://youtrack.example.com:8080
+export YOUTRACK_TOKEN=perm-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-生成永久 Token：YouTrack → Settings → Account → Authentication → New token。
+生成 Token：YouTrack → Settings → Account → Authentication → New token。
 
-## 验证
+## 使用
 
-调用 `get_current_user` 应返回当前用户信息。调用 `find_projects(query: "")` 应列出所有项目。
+Agent 读取 `tools/index.md` → 找到工具 → 读取 JSON-RPC 模板 → POST 到 `$YOUTRACK_URL/mcp`。只加载需要的工具文件。
 
-## 工具一览（22 个）
+## 工具一览（23 个）
 
-| 分类 | 工具 |
-|------|------|
-| Issues | `search_issues`、`get_issue`、`create_issue`、`create_draft_issue`、`update_issue`、`change_issue_assignee`、`add_issue_comment`、`get_issue_comments`、`get_issue_fields_schema`、`manage_issue_tags`、`link_issues`、`log_work` |
-| 知识库 | `search_articles`、`get_article`、`create_article`、`update_article` |
-| 项目 | `find_projects`、`get_project` |
-| 用户/组 | `get_current_user`、`find_user`、`find_user_groups`、`get_user_group_members` |
-| 其他 | `get_saved_issue_searches` |
+| 分类 | 数量 | 详情 |
+|------|------|------|
+| Issues | 13 | `tools/issues/` — 搜索、查看、创建、更新、评论、标签、链接、工时 |
+| 知识库 | 4 | `tools/articles/` — 搜索、查看、创建、更新文章 |
+| 项目 | 2 | `tools/projects/` — 搜索项目、项目详情 |
+| 用户/组 | 4 | `tools/users/` — 当前用户、查找用户、群组、成员 |
 
-完整工具参考和查询语法指南见 `SKILL.md`。
+渐进式发现：`tools/index.md` → `tools/<分类>/<工具>.md`。完整模板见 `SKILL.md`。
 
 ## License
 

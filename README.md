@@ -1,6 +1,6 @@
 <!-- AGENT_READABLE_START -->
 name: youtrack-skill
-description: YouTrack MCP integration skill — register the built-in MCP server to access issues, knowledge base articles, projects, users, tags, and work items via 22 MCP tools. Zero install, zero dependencies.
+description: YouTrack MCP skill — progressive-discovery access to 23 tools (issues, articles, projects, users) via JSON-RPC calls. Zero install, loads only needed tool templates. Triggers: YouTrack, ticket, issue, article, KB.
 platforms: OpenCode, WorkBuddy, Claude Code, Cursor
 requires: YouTrack >= 2024.3
 entry: MCP server at {baseUrl}/mcp
@@ -16,54 +16,40 @@ entry: MCP server at {baseUrl}/mcp
 
 > 🇨🇳 [中文文档](README.zh-CN.md)
 
-An agent skill for YouTrack's **built-in MCP server** (>= 2024.3). Register the MCP endpoint once, then your agent has access to 22 tools — issues, knowledge base articles, projects, users, tags, work items. No CLI, no npm install, zero dependencies.
+An agent skill for YouTrack's **built-in MCP server** (>= 2024.3). Set two environment variables, then invoke any of 23 tools via JSON-RPC — the agent loads only the tool template it needs from `tools/`. No CLI, no npm install, no MCP server registration, zero context overhead.
 
 ## Install
-
-Copy this directory to your agent's skill location:
 
 ```bash
 # OpenCode / WorkBuddy
 cp -r youtrack-skill ~/.agents/skills/youtrack
-
-# Claude Code
-cp -r youtrack-skill ~/.claude/skills/youtrack
 ```
 
 ## Configure
 
-Add the MCP server to your agent's config (`opencode.json` or equivalent):
+Set two environment variables:
 
-```json
-{
-  "mcpServers": {
-    "youtrack": {
-      "url": "http://your-youtrack.example.com:8080/mcp",
-      "headers": {
-        "Authorization": "Bearer perm-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-      }
-    }
-  }
-}
+```bash
+export YOUTRACK_URL=http://youtrack.example.com:8080
+export YOUTRACK_TOKEN=perm-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Generate a permanent token in YouTrack: **Settings > Account > Authentication > New token**.
+Generate the token in YouTrack: **Settings > Account > Authentication > New token**.
 
-## Verify
+## Usage
 
-Call `get_current_user` — should return your login and email. Call `find_projects` with `query: ""` to list all projects.
+The agent reads `tools/index.md` → finds the tool → reads the JSON-RPC template → POSTs to `$YOUTRACK_URL/mcp`. Only the needed tool file is loaded into context.
 
-## Tools (22 total)
+## Tools (23 total)
 
-| Category | Tools |
-|----------|-------|
-| Issues | `search_issues`, `get_issue`, `create_issue`, `create_draft_issue`, `update_issue`, `change_issue_assignee`, `add_issue_comment`, `get_issue_comments`, `get_issue_fields_schema`, `manage_issue_tags`, `link_issues`, `log_work` |
-| Knowledge Base | `search_articles`, `get_article`, `create_article`, `update_article` |
-| Projects | `find_projects`, `get_project` |
-| Users & Groups | `get_current_user`, `find_user`, `find_user_groups`, `get_user_group_members` |
-| Other | `get_saved_issue_searches` |
+| Category | Count | Full list |
+|----------|-------|-----------|
+| Issues | 13 | `tools/issues/` — search, get, create, update, comment, tag, link, log work |
+| Knowledge Base | 4 | `tools/articles/` — search, get, create, update articles |
+| Projects | 2 | `tools/projects/` — find, get project details |
+| Users & Groups | 4 | `tools/users/` — current user, find user, groups, members |
 
-Full tool reference and query language guide: `SKILL.md`.
+Full JSON-RPC templates and query language guide: `SKILL.md`. Progressive discovery: `tools/index.md` → `tools/<cat>/<tool>.md`.
 
 ## License
 
