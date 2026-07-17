@@ -1,6 +1,6 @@
 ---
 name: youtrack
-description: Use when working with YouTrack — issues, knowledge base articles, projects, users, tags, or work items. Triggers: YouTrack, ticket, issue, task, article, KB, knowledge base, sprint, board, PROJ-XXX IDs, task tracking.
+description: "Use when working with YouTrack - issues, knowledge base articles, projects, users, tags, or work items. Triggers: YouTrack, ticket, issue, task, article, KB, knowledge base, sprint, board, PROJ-XXX IDs, task tracking."
 ---
 
 # YouTrack MCP
