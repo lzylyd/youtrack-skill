@@ -10,17 +10,24 @@ YouTrack (>=2024.3) exposes a built-in MCP server at `{baseUrl}/mcp`. Invoke too
 
 ## Quick Start
 
-### 1. Get your token
+### 1. Configure credentials
 
-Generate a permanent token in YouTrack: **Settings > Account > Authentication > New token**.
+This skill reads credentials from environment variables:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `YOUTRACK_URL` | Yes | YouTrack instance URL, e.g. `http://192.168.0.29:8080` |
+| `YOUTRACK_TOKEN` | Yes | Permanent token from YouTrack |
+
+**If either variable is not set**, ask the user for the values. Generate a permanent token in YouTrack: **Settings > Account > Authentication > New token**.
 
 ### 2. Invoke the MCP endpoint
 
-Every tool call follows the same pattern:
+Every tool call follows the same pattern. Replace `{baseUrl}` with `$YOUTRACK_URL` and `{token}` with `$YOUTRACK_TOKEN`:
 
 ```
-POST {baseUrl}/mcp
-Authorization: Bearer {token}
+POST {baseUrl}/mcp    ← $YOUTRACK_URL + "/mcp"
+Authorization: Bearer {token}   ← $YOUTRACK_TOKEN
 Content-Type: application/json
 Accept: application/json, text/event-stream
 
@@ -30,10 +37,7 @@ Accept: application/json, text/event-stream
 
 ### 3. Test connectivity
 
-```json
-{"jsonrpc":"2.0","id":1,"method":"tools/call",
- "params":{"name":"get_current_user","arguments":{}}}
-```
+Use `get_current_user` (no arguments) to verify credentials work:
 
 ## Tool Discovery
 
